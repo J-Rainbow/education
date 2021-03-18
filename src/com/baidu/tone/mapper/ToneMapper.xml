@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.baidu.tone.mapper.ToneMapper">
+
+	<!-- 查询 -->
+	<select id="queryTone" resultType="tone">
+		SELECT
+		tid,tname,tsuggest,tphoto,ttime,tpeople
+		FROM education_tone
+		WHERE
+		tisdelete = 1
+		ORDER BY tid DESC
+	</select>
+
+	<!-- 添加 -->
+	<insert id="insertTone" parameterType="tone">
+		<selectKey keyProperty="tid" resultType="int" order="BEFORE">
+			select
+			max(tid)+1 from education_tone
+		</selectKey>
+		INSERT INTO
+		education_tone(tid,tname,tsuggest,tphoto,ttime,tisdelete,tpeople)
+		VALUE (#{tid},#{tname},#{tsuggest},#{tphoto},NOW(),1,#{tpeople});
+	</insert>
+
+	<!-- 根据id查询 -->
+	<select id="findById" parameterType="int" resultType="tone">
+		SELECT *
+		FROM education_tone WHERE tid = #{tid}
+	</select>
+
+	<!-- 修改 -->
+	<update id="updateTone" parameterType="tone">
+		update education_tone
+		<set>
+			<if test="tname != null">
+				tname = #{tname,jdbcType=VARCHAR},
+			</if>
+			<if test="tsuggest != null">
+				tsuggest = #{tsuggest,jdbcType=VARCHAR},
+			</if>
+			<if test="tphoto != null">
+				tphoto = #{tphoto,jdbcType=VARCHAR},
+			</if>
+			<if test="ttime == null">
+				ttime =NOW(),
+			</if>
+			<if test="tpeople != null">
+				tpeople = #{tpeople,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where tid = #{tid,jdbcType=INTEGER}
+	</update>
+	<!-- 删除 -->
+	<update id="deleteTone">
+		UPDATE education_tone SET
+		tisdelete=2,tpeople=#{userName},ttime=NOW() WHERE tid=#{tid}
+	</update>
+</mapper>

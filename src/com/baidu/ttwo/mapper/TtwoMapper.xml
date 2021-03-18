@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.baidu.ttwo.mapper.TtwoMapper">
+	
+	<!-- 查询 -->
+	<select id="queryTtwo" resultType="ttwo">
+		SELECT rid,rname,rsuggest,rphoto,rtime,rpeople
+	    FROM educationt_ttwo 
+	    WHERE risdelete = 1 
+	    ORDER BY rid DESC
+	</select>
+	
+	<!-- 添加 -->
+	<insert id="insertTtwo" parameterType="ttwo">
+		<selectKey keyProperty="rid" resultType="int" order="BEFORE">
+			select max(rid)+1 from educationt_ttwo
+		</selectKey>
+		INSERT INTO educationt_ttwo(rid,rname,rsuggest,rphoto,rtime,risdelete,rpeople) VALUE (#{rid},#{rname},#{rsuggest},#{rphoto},NOW(),1,#{rpeople});
+	</insert>
+	
+	<!-- 根据id查询 -->
+	<select id="findById" parameterType="int" resultType="ttwo">
+		SELECT * FROM  educationt_ttwo WHERE rid = #{rid}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateTtwo" parameterType="ttwo">
+		update educationt_ttwo
+		<set>
+			<if test="rname != null">
+				rname = #{rname,jdbcType=VARCHAR},
+			</if>
+			<if test="rsuggest != null">
+				rsuggest = #{rsuggest,jdbcType=VARCHAR},
+			</if>
+			<if test="rphoto != null">
+				rphoto = #{rphoto,jdbcType=VARCHAR},
+			</if>
+			<if test="rtime == null">
+				rtime =NOW(),
+			</if>
+			<if test="rpeople != null">
+				rpeople = #{rpeople,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where rid = #{rid,jdbcType=INTEGER}
+	</update>
+	<!-- 删除 -->
+	<update id="deleteTtwo">
+		UPDATE educationt_ttwo SET risdelete=2,rpeople=#{userName},rtime=NOW() WHERE rid=#{rid}
+	</update>
+</mapper>

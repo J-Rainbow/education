@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.baidu.enroll.mapper.EnrollMapper">
+	
+	<!-- 查询报名信息 -->
+	<select id="queryEnroll" resultType="enroll">
+		SELECT eid,ename,ephone,eqq,ecourse,etime,epeople,eisdelete 
+	    FROM easybuy_enroll 
+	    WHERE eisdelete = 1 
+	    ORDER BY eid DESC
+	</select>
+	
+	<!-- 添加报名信息 -->
+	<insert id="insertEnroll" parameterType="enroll">
+		<selectKey keyProperty="eid" resultType="int" order="BEFORE">
+			select max(eid)+1 from easybuy_enroll
+		</selectKey>
+		INSERT INTO easybuy_enroll(eid,ename,ephone,eqq,ecourse,etime,eisdelete) VALUE (#{eid},#{ename},#{ephone},#{eqq},#{ecourse},NOW(),1);
+	</insert>
+	
+	<!-- 根据id查询 -->
+	<select id="findById" parameterType="int" resultType="enroll">
+		SELECT * FROM  easybuy_enroll WHERE eid = #{eid}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateEnoll" parameterType="enroll">
+		UPDATE easybuy_enroll SET epeople=#{epeople},ename=#{ename},ephone=#{ephone},eqq=#{eqq},ecourse=#{ecourse},etime=NOW() WHERE eid=#{eid}
+	</update>
+	
+	<!-- 删除 -->
+	<update id="deleteEnroll">
+		UPDATE easybuy_enroll SET eisdelete=2,epeople=#{userName},etime=NOW() WHERE eid=#{eid}
+	</update>
+</mapper>
